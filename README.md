@@ -9,7 +9,7 @@ JSON representation of classrooms and schedules at UTM stored using MongoDB
 ## Usage
 Run scraper.py and then run filter.py\
 Put in your username and password for your Mongo Database\
-```mongodb+srv://<USERNAME?:<PASSWORD>@utm-o7d7p.mongodb.net/test?retryWrites=true&w=majority```
+```mongodb+srv://<USERNAME?:<PASSWORD>@<DATABASE URL>/test?retryWrites=true&w=majority```
 
 ## Requirements
 - uoftscrapers
