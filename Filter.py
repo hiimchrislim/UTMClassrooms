@@ -6,13 +6,14 @@ from pymongo import MongoClient
 class Connect(object):
     @staticmethod
     def get_connection():
-        return MongoClient("mongodb+srv://<USERNAME?:<PASSWORD>@utm-o7d7p.mongodb.net/test?retryWrites=true&w=majority")
+        return MongoClient("mongodb+srv://<USERNAME?:<PASSWORD>@<DATABASE URL>/test?retryWrites=true&w=majority")
 
 
 connection = Connect.get_connection()
 db = connection.MapUTM
 serverStatusResult = db.command("serverStatus")
 directory = './all_courses'
+building_code = "DH"
 
 for filename in os.listdir(directory):
     found = False
@@ -24,7 +25,7 @@ for filename in os.listdir(directory):
             }
             for section in file_contents["meeting_sections"]:
                 for time in section["times"]:
-                    if "DH" in time["location"]:
+                    if building_code in time["location"]:
                         course = {
                             "course_code": file_contents["code"][0:9],
                             "name": file_contents["name"],
@@ -35,13 +36,9 @@ for filename in os.listdir(directory):
                                       "duration": time["duration"] / 3600}
                         }
                         if db.Deerfield.find_one({"room": time["location"]}) is None:
-                            print("Insert")
                             room["room"] = time["location"]
                             room["classes"].append(course)
                             db.Deerfield.insert_one(room)
-                            print("Inserted")
                         else:
-                            print("Update DB Classes For Room")
                             db.Deerfield.find_one_and_update({"room": time["location"]},
                                                              {"$addToSet": {"classes": course}})
-                            print("Updated DB Classes For Room")
